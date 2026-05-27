@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beckner Family Summer Chore Chart</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #3498db; --accent: #27ae60; --bg: #f0f2f5; --danger: #e74c3c; --completed-bg: #e8f5e9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+       
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .view-toggle { text-align: center; margin-bottom: 25px; }
+        .view-toggle button { padding: 10px 20px; margin: 0 5px; cursor: pointer; border: none; background: #ddd; border-radius: 20px; transition: 0.3s; }
+        .view-toggle button.active { background: var(--secondary); color: white; }
+ 
+        .date-display { text-align: center; font-size: 1.2em; font-weight: bold; color: #555; margin-bottom: 20px; }
+ 
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .card { border: 1px solid #eee; border-radius: 12px; padding: 15px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: background 0.3s; }
+        .card h3 { margin-top: 0; color: var(--secondary); border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;}
+       
+        .card.unlocked { background: var(--completed-bg); border: 2px solid var(--accent); }
+        .unlocked-badge { display: none; font-size: 12px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 10px; }
+        .card.unlocked .unlocked-badge { display: inline-block; }
+ 
+        .chore-list { list-style: none; padding: 0; margin: 0; }
+        .chore-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 8px; background: #f9f9f9; border-radius: 6px; font-size: 0.95em; }
+        .chore-item.completed { text-decoration: line-through; color: #888; background: var(--completed-bg); }
+        .chore-item input[type="checkbox"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
+ 
+        .top-btns { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .admin-btn { font-size: 13px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; background: #95a5a6; color: white; }
+        .admin-btn.danger { background: var(--danger); }
+        .admin-btn.warning { background: #f39c12; }
+        .hidden { display: none !important; }
+       
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
+        table th { background: #f8f9fa; }
+        table ul { margin: 0; padding-left: 20px; }
+        table li.completed { text-decoration: line-through; color: var(--accent); }
+        table td.completed-day { background-color: var(--completed-bg); border-left: 5px solid var(--accent); }
+ 
+        .admin-panel { background: #fff; border: 2px solid #34495e; padding: 20px; border-radius: 10px; }
+        .admin-section { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .delete-btn { background: var(--danger); color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 6px; font-size: 12px; }
+        .add-form { display: flex; gap: 10px; margin-top: 10px; }
+        .add-form select, .add-form input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .add-form button { padding: 8px 15px; background: var(--secondary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+       
+        .sunday-notice { font-size: 12px; color: #7f8c8d; font-style: italic; }
+    </style>
+</head>
+<body>
+ 
+<div class="container">
+    <div class="top-btns">
+        <button class="admin-btn danger" onclick="resetDailyData()">Reset Today</button>
+        <button class="admin-btn" onclick="openAdmin()">⚙️ Admin</button>
+    </div>
+   
+    <h1>Beckner Family Summer Chore Chart</h1>
+   
+    <div class="view-toggle">
+        <button id="btnDaily" class="active" onclick="switchView('daily')">Daily Tracker</button>
+        <button id="btnWeekly" onclick="switchView('weekly')">Weekly Schedule</button>
+    </div>
+ 
+    <!-- DAILY VIEW -->
+    <div id="dailyView">
+        <div id="dateDisplay" class="date-display"></div>
+ 
+        <div class="grid">
+            <!-- Tallon -->
+            <div class="card" id="card-Tallon">
+                <h3>Tallon <span class="unlocked-badge">DONE</span></h3>
+                <ul class="chore-list" id="daily-Tallon"></ul>
+                <div id="notice-Tallon" class="sunday-notice hidden">No assigned chores today.</div>
+            </div>
+            <!-- Paisley -->
+            <div class="card" id="card-Paisley">
+                <h3>Paisley <span class="unlocked-badge">DONE</span></h3>
+                <ul class="chore-list" id="daily-Paisley"></ul>
+                <div id="notice-Paisley" class="sunday-notice hidden">No assigned chores today.</div>
+            </div>
+            <!-- Julian -->
+            <div class="card" id="card-Julian">
+                <h3>Julian <span class="unlocked-badge">DONE</span></h3>
+                <ul class="chore-list" id="daily-Julian"></ul>
+                <div id="notice-Julian" class="sunday-notice hidden">No assigned chores today.</div>
+            </div>
+            <!-- Marshall -->
+            <div class="card" id="card-Marshall">
+                <h3>Marshall <span class="unlocked-badge">DONE</span></h3>
+                <ul class="chore-list" id="daily-Marshall"></ul>
+                <div id="notice-Marshall" class="sunday-notice hidden">No assigned chores today.</div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- WEEKLY VIEW -->
+    <div id="weeklyView" class="hidden">
+        <table>
+            <thead><tr><th>Day</th><th>Tallon</th><th>Paisley</th><th>Julian</th><th>Marshall</th></tr></thead>
+            <tbody id="weeklyBody"></tbody>
+        </table>
+    </div>
+ 
+    <!-- ADMIN VIEW -->
+    <div id="adminView" class="admin-panel hidden">
+        <h2>Admin Dashboard</h2>
+        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+            <button onclick="closeAdmin()" class="admin-btn">Exit Admin</button>
+            <button onclick="restoreDefaultSchedule()" class="admin-btn warning">Restore Default Schedule</button>
+            <button class="admin-btn danger" onclick="resetWeeklyHistory()">Wipe All History</button>
+        </div>
+ 
+        <div class="admin-section">
+            <h3>Add/Edit Daily Chores</h3>
+            <div class="add-form">
+                <select id="newDailyKid">
+                    <option value="Tallon">Tallon</option><option value="Paisley">Paisley</option>
+                    <option value="Julian">Julian</option><option value="Marshall">Marshall</option>
+                </select>
+                <select id="newDailyDay">
+                    <option value="Monday">Monday</option><option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option><option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+                <input type="text" id="newDailyName" placeholder="Chore Name">
+                <button onclick="addDailyChore()">Add</button>
+            </div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top:20px;">
+                <div><h4>Tallon</h4><ul id="adminDaily-Tallon" class="chore-list"></ul></div>
+                <div><h4>Paisley</h4><ul id="adminDaily-Paisley" class="chore-list"></ul></div>
+                <div><h4>Julian</h4><ul id="adminDaily-Julian" class="chore-list"></ul></div>
+                <div><h4>Marshall</h4><ul id="adminDaily-Marshall" class="chore-list"></ul></div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+    const PASS = "19931988";
+    const KIDS = ['Tallon', 'Paisley', 'Julian', 'Marshall'];
+    const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+ 
+    const masterDailySchedule = {
+        Tallon: {
+            Monday: ["Walk Chevy", "Clean Room", "Clean Bathroom", "Make Dinner"],
+            Tuesday: ["Walk Chevy", "Clean Room", "Vacuum"],
+            Wednesday: ["Walk Chevy", "Clean Room", "Dishes"],
+            Thursday: ["Walk Chevy", "Clean Room", "Vacuum", "Dishes"],
+            Friday: ["Walk Chevy", "Clean Room", "Clean Windows", "Take Trash"],
+            Saturday: ["Laundry (sheets too)"],
+            Sunday: []
+        },
+        Paisley: {
+            Monday: ["Walk Ford", "Clean Room", "Dishes"],
+            Tuesday: ["Walk Ford", "Clean Room", "Dishes", "Clean Windows"],
+            Wednesday: ["Walk Ford", "Clean Room", "Make Dinner", "Vacuum"],
+            Thursday: ["Walk Ford", "Clean Room"],
+            Friday: ["Walk Ford", "Clean Room", "Clean Bathroom", "Vacuum"],
+            Saturday: ["Laundry (sheets too)"],
+            Sunday: []
+        },
+        Julian: {
+            Monday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"],
+            Tuesday: ["Clean Room", "Read 20 mins", "Dog Poop"],
+            Wednesday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"],
+            Thursday: ["Clean Room", "Read 20 mins", "Gather all garbage"],
+            Friday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins", "Garbage Cans to Road"],
+            Saturday: ["Clean Room", "Gather laundry"],
+            Sunday: []
+        },
+        Marshall: {
+            Monday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"],
+            Tuesday: ["Clean Room", "Read 20 mins", "Gather all garbage"],
+            Wednesday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"],
+            Thursday: ["Clean Room", "Read 20 mins", "Dog Poop"],
+            Friday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"],
+            Saturday: ["Clean Room", "Gather Laundry"],
+            Sunday: []
+        }
+    };
+ 
+    const defaultState = {
+        daily: JSON.parse(JSON.stringify(masterDailySchedule)),
+        history: {}
+    };
+ 
+    let appData = JSON.parse(localStorage.getItem('becknerV11')) || defaultState;
+    let currentDateString;
+    let currentDayData;   
+ 
+    function getTodayDateString(date = new Date()) {
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const yyyy = date.getFullYear();
+        return `${mm}/${dd}/${yyyy}`;
+    }
+ 
+    function getDayName(date = new Date()) {
+        return DAY_NAMES[date.getDay()];
+    }
+ 
+    function displayDate() {
+        const today = new Date();
+        document.getElementById('dateDisplay').innerText = `${DAY_NAMES[today.getDay()]} - ${currentDateString}`;
+    }
+ 
+    function initializeCurrentDayData() {
+        currentDateString = getTodayDateString();
+        if (appData.history[currentDateString]) {
+            currentDayData = appData.history[currentDateString];
+        } else {
+            currentDayData = {};
+            KIDS.forEach(kid => {
+                currentDayData[kid] = { checkedDailyIndices: [] };
+            });
+            appData.history[currentDateString] = currentDayData;
+            saveData();
+        }
+    }
+ 
+    function switchView(view) {
+        document.getElementById('dailyView').classList.add('hidden');
+        document.getElementById('weeklyView').classList.add('hidden');
+        document.getElementById('adminView').classList.add('hidden');
+        document.getElementById('btnDaily').classList.remove('active');
+        document.getElementById('btnWeekly').classList.remove('active');
+ 
+        if(view === 'daily') {
+            document.getElementById('dailyView').classList.remove('hidden');
+            document.getElementById('btnDaily').classList.add('active');
+            displayDate();
+            renderDailyView();
+        } else if(view === 'weekly') {
+            document.getElementById('weeklyView').classList.remove('hidden');
+            document.getElementById('btnWeekly').classList.add('active');
+            renderWeekly();
+        } else if(view === 'admin') {
+            document.getElementById('adminView').classList.remove('hidden');
+            renderAdminView();
+        }
+    }
+ 
+    function toggleCheck(kid, index) {
+        const checkedArr = currentDayData[kid].checkedDailyIndices;
+        const choreIndex = checkedArr.indexOf(index);
+        if(choreIndex !== -1) checkedArr.splice(choreIndex, 1);
+        else checkedArr.push(index);
+        saveData();
+        checkCardStatus(kid);
+    }
+ 
+    function isKidDayComplete(kid, dayDataForDate, dayNameForDate) {
+        if (!dayDataForDate || !dayDataForDate[kid]) return false;
+        const choresForThisDay = appData.daily[kid][dayNameForDate] || [];
+        if (choresForThisDay.length === 0) return false;
+        
+        const checkedDaily = dayDataForDate[kid].checkedDailyIndices.length;
+        return checkedDaily === choresForThisDay.length;
+    }
+ 
+    function checkCardStatus(kid) {
+        const cardEl = document.getElementById('card-' + kid);
+        if (isKidDayComplete(kid, currentDayData, getDayName())) {
+            cardEl.classList.add('unlocked');
+        } else {
+            cardEl.classList.remove('unlocked');
+        }
+    }
+ 
+    function renderDailyView() {
+        const currentDayName = getDayName();
+ 
+        KIDS.forEach(kid => {
+            const listEl = document.getElementById('daily-' + kid);
+            const noticeEl = document.getElementById('notice-' + kid);
+            listEl.innerHTML = "";
+           
+            const choresForThisDay = appData.daily[kid][currentDayName] || [];
+ 
+            if(choresForThisDay.length === 0) {
+                noticeEl.classList.remove('hidden');
+            } else {
+                noticeEl.classList.add('hidden');
+                choresForThisDay.forEach((task, index) => {
+                    const isChecked = currentDayData[kid].checkedDailyIndices.includes(index) ? 'checked' : '';
+                    listEl.innerHTML += `<li class="chore-item"><label><input type="checkbox" onchange="toggleCheck('${kid}', ${index})" ${isChecked}> ${task}</label></li>`;
+                });
+            }
+            checkCardStatus(kid);
+        });
+    }
+ 
+    // --- Admin Functions ---
+    function openAdmin() { if(prompt("Enter Admin Password:") === PASS) { switchView('admin'); } else { alert("Incorrect Password"); } }
+    function closeAdmin() { switchView('daily'); }
+ 
+    function renderAdminView() {
+        KIDS.forEach(kid => {
+            const dList = document.getElementById('adminDaily-' + kid);
+            dList.innerHTML = "";
+            DAY_NAMES.forEach(day => {
+                const choresForDay = appData.daily[kid][day] || [];
+                if (choresForDay.length > 0) {
+                    dList.innerHTML += `<li><strong>${day}:</strong></li>`;
+                    choresForDay.forEach((t, i) => {
+                        dList.innerHTML += `<li class="chore-item"><span>- ${t}</span> <button class="delete-btn" onclick="delDaily('${kid}', '${day}', ${i})">X</button></li>`;
+                    });
+                }
+            });
+        });
+    }
+ 
+    function addDailyChore() {
+        const kid = document.getElementById('newDailyKid').value;
+        const day = document.getElementById('newDailyDay').value;
+        const name = document.getElementById('newDailyName').value;
+        if(name) {
+            if (!appData.daily[kid][day]) appData.daily[kid][day] = [];
+            appData.daily[kid][day].push(name);
+            document.getElementById('newDailyName').value = "";
+            saveData(); renderAdminView();
+        }
+    }
+ 
+    function delDaily(kid, day, index) {
+        appData.daily[kid][day].splice(index, 1);
+        saveData(); renderAdminView();
+    }
+ 
+    function restoreDefaultSchedule() {
+        if(confirm("Restore all standard daily chores to original settings?")) {
+            appData.daily = JSON.parse(JSON.stringify(masterDailySchedule));
+            saveData(); renderAdminView();
+        }
+    }
+ 
+    function renderWeekly() {
+        const body = document.getElementById('weeklyBody');
+        body.innerHTML = "";
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        
+        for (let i = 0; i < 7; i++) {
+            const currentDay = new Date(startOfWeek);
+            currentDay.setDate(startOfWeek.getDate() + i);
+            const dateStr = getTodayDateString(currentDay);
+            const dayName = DAY_NAMES[currentDay.getDay()];
+            const dayHistory = appData.history[dateStr] || {};
+ 
+            let rowHTML = `<tr><td><strong>${dayName}<br>${dateStr}</strong></td>`;
+            KIDS.forEach(kid => {
+                const kidDailyData = dayHistory[kid] || { checkedDailyIndices: [] };
+                const isDayComplete = isKidDayComplete(kid, dayHistory, dayName);
+                const cellClass = isDayComplete ? 'completed-day' : '';
+ 
+                rowHTML += `<td class="${cellClass}"><ul>`;
+                const choresForThisDay = appData.daily[kid][dayName] || [];
+                choresForThisDay.forEach((choreName, index) => {
+                    const isCompleted = kidDailyData.checkedDailyIndices.includes(index);
+                    rowHTML += `<li class="${isCompleted ? 'completed' : ''}">${choreName}</li>`;
+                });
+                rowHTML += `</ul></td>`;
+            });
+            rowHTML += `</tr>`;
+            body.innerHTML += rowHTML;
+        }
+    }
+ 
+    function resetDailyData() {
+        if(prompt("Enter Admin Password to clear TODAY'S checks:") === PASS) {
+            KIDS.forEach(kid => { currentDayData[kid] = { checkedDailyIndices: [] }; });
+            saveData(); renderDailyView();
+        }
+    }
+ 
+    function resetWeeklyHistory() {
+        if(prompt("Enter Admin Password to clear ALL historical data:") === PASS) {
+            appData.history = {};
+            initializeCurrentDayData();
+            saveData(); renderDailyView();
+        }
+    }
+ 
+    function saveData() {
+        localStorage.setItem('becknerV11', JSON.stringify(appData));
+    }
+ 
+    initializeCurrentDayData();
+    switchView('daily');
+</script>
+</body>
+</html>
