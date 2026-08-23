@@ -136,12 +136,45 @@
     const PASS = "19931988";
     const KIDS = ['Tallon', 'Paisley', 'Julian', 'Marshall'];
     const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const masterDailySchedule = {
-        Tallon: { Monday: ["Walk Chevy", "Clean Room", "Clean Bathroom", "Make Dinner"], Tuesday: ["Walk Chevy", "Clean Room", "Vacuum"], Wednesday: ["Walk Chevy", "Clean Room", "Dishes"], Thursday: ["Walk Chevy", "Clean Room", "Vacuum", "Dishes"], Friday: ["Walk Chevy", "Clean Room", "Clean Windows", "Take Trash"], Saturday: ["Laundry (sheets too)"], Sunday: [] },
-        Paisley: { Monday: ["Walk Ford", "Clean Room", "Dishes"], Tuesday: ["Walk Ford", "Clean Room", "Dishes", "Clean Windows"], Wednesday: ["Walk Ford", "Clean Room", "Make Dinner", "Vacuum"], Thursday: ["Walk Ford", "Clean Room"], Friday: ["Walk Ford", "Clean Room", "Clean Bathroom", "Vacuum"], Saturday: ["Laundry (sheets too)"], Sunday: [] },
-        Julian: { Monday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"], Tuesday: ["Clean Room", "Read 20 mins", "Dog Poop"], Wednesday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"], Thursday: ["Clean Room", "Read 20 mins", "Gather all garbage"], Friday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins", "Garbage Cans to Road"], Saturday: ["Clean Room", "Gather laundry"], Sunday: [] },
-        Marshall: { Monday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"], Tuesday: ["Clean Room", "Read 20 mins", "Gather all garbage"], Wednesday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"], Thursday: ["Clean Room", "Read 20 mins", "Dog Poop"], Friday: ["Clean Room", "Puck Handling 20mins", "Read 20 mins"], Saturday: ["Clean Room", "Gather Laundry"], Sunday: [] }
+        const masterDailySchedule = {
+        Tallon: { 
+            Monday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Vacuum"], 
+            Tuesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Vacuum"], 
+            Wednesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Vacuum"], 
+            Thursday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Vacuum"], 
+            Friday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Vacuum"], 
+            Saturday: ["Clean room", "Anything else requested", "Laundry", "Pickup poop"], 
+            Sunday: [] 
+        },
+        Paisley: { 
+            Monday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Tuesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Wednesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Thursday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Friday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Saturday: ["Clean room", "Anything else requested", "Laundry"], 
+            Sunday: [] 
+        },
+        Julian: { 
+            Monday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Dishes (Empty and Load)"], 
+            Tuesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Dishes (Empty and Load)", "Pickup poop"], 
+            Wednesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Dishes (Empty and Load)"], 
+            Thursday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Dishes (Empty and Load)"], 
+            Friday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room", "Dishes (Empty and Load)"], 
+            Saturday: ["Clean room", "Anything else requested"], 
+            Sunday: [] 
+        },
+        Marshall: { 
+            Monday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Tuesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Wednesday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Thursday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Friday: ["Dressed", "Eat breakfast", "brush teeth", "Water Bottle", "Backpack", "Lunch (if taking)", "Clean room"], 
+            Saturday: ["Clean room", "Anything else requested"], 
+            Sunday: [] 
+        }
     };
+
 
     let appData = { daily: JSON.parse(JSON.stringify(masterDailySchedule)), history: {} };
     let currentView = 'daily';
